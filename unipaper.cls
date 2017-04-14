@@ -71,6 +71,11 @@
 	\thispagestyle{empty}
 }
 
+\newenvironment{frontmatter}[1]{
+	\section*{\centerline{#1}}
+	\thispagestyle{empty}
+}
+
 \BeforeBeginEnvironment{minted}%
      {\begin{tcolorbox}[colback=codebackground, colframe=framecolor, boxrule=0.08em, arc=0.1em]}%
 \AfterEndEnvironment{minted}
