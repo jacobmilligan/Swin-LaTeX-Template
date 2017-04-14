@@ -1,0 +1,246 @@
+#!/usr/bin/env python3
+
+import argparse
+import os
+import shutil
+import re
+
+parser = argparse.ArgumentParser()
+dirs = ('Content', 'Resources', 'Structure')
+bin_path = os.path.dirname(os.path.realpath(__file__))
+
+gitignore = ['.DS_Store',
+             'tex_build/',
+             '*.aux',
+             '*.lof',
+             '*.log',
+             '*.lot',
+             '*.fls',
+             '*.out',
+             '*.toc',
+             '*.fmt',
+             '*.fot',
+             '*.cb',
+             '*.cb2',
+             '*.dvi',
+             '*-converted-to.*',
+             '*.bbl',
+             '*.bcf',
+             '*.blg',
+             '*-blx.aux',
+             '*-blx.bib',
+             '*.run.xml',
+             '*.fdb_latexmk',
+             '*.synctex',
+             '*.synctex(busy)',
+             '*.synctex.gz',
+             '*.synctex.gz(busy)',
+             '*.pdfsync',
+             '*.alg',
+             '*.loa',
+             'acs-*.bib',
+             '*.thm',
+             '*.nav',
+             '*.pre',
+             '*.snm',
+             '*.vrb',
+             '*.soc',
+             '*.cpt',
+             '*.spl',
+             '*.ent',
+             '*.lox',
+             '*.mf',
+             '*.mp',
+             '*.t[1-9]',
+             '*.t[1-9][0-9]',
+             '*.tfm',
+             '*.end',
+             '*.?end',
+             '*.[1-9]',
+             '*.[1-9][0-9]',
+             '*.[1-9][0-9][0-9]',
+             '*.[1-9]R',
+             '*.[1-9][0-9]R',
+             '*.[1-9][0-9][0-9]R',
+             '*.eledsec[1-9]',
+             '*.eledsec[1-9]R',
+             '*.eledsec[1-9][0-9]',
+             '*.eledsec[1-9][0-9]R',
+             '*.eledsec[1-9][0-9][0-9]',
+             '*.eledsec[1-9][0-9][0-9]R',
+             '*.acn',
+             '*.acr',
+             '*.glg',
+             '*.glo',
+             '*.gls',
+             '*.glsdefs',
+             '*-gnuplottex-*',
+             '*.gaux',
+             '*.gtex',
+             '*.brf',
+             '*-concordance.tex',
+             '*.tikz',
+             '*-tikzDictionary',
+             '*.lol',
+             '*.idx',
+             '*.ilg',
+             '*.ind',
+             '*.ist',
+             '*.maf',
+             '*.mlf',
+             '*.mlt',
+             '*.mtc[0-9]*',
+             '*.slf[0-9]*',
+             '*.slt[0-9]*',
+             '*.stc[0-9]*',
+             '_minted*',
+             '*.pyg',
+             '*.mw',
+             '*.nlo',
+             '*.pax',
+             '*.pdfpc',
+             '*.sagetex.sage',
+             '*.sagetex.py',
+             '*.sagetex.scmd',
+             '*.wrt',
+             '*.sout',
+             '*.sympy',
+             'sympy-plots-for-*.tex/',
+             '*.upa',
+             '*.upb',
+             '*.pytxcode',
+             'pythontex-files-*/',
+             '*.loe',
+             '*.dpth',
+             '*.md5',
+             '*.auxlock',
+             '*.tdo',
+             '*.lod',
+             '*.xdy',
+             '*.xyc',
+             '*.ttt',
+             '*.fff',
+             'TSWLatexianTemp*',
+             '*.bak',
+             '*.sav',
+             '.texpadtmp',
+             '*.backup',
+             '*~[0-9]*',
+             '*-tags.tex']
+
+
+def get_info(args):
+    author = args.author
+    title = args.title
+    university = "Swinburne University of Technology"
+    unit = args.unit_name
+    unitcode = args.unit_code
+    student = args.student_id
+    semester = args.semester
+
+    info = '\\title{{{0}}}'.format(title)
+
+    if args.subtitle:
+        info += '\n\\subtitle{{{0}}}'.format(args.subtitle)
+
+    info += '\n\\university{{{0}}}' \
+            '\n\\unitcode{{{1}}}' \
+            '\n\\unitname{{{2}}}' \
+            '\n\\author{{{3}}}' \
+            '\n\\studentid{{{4}}}' \
+            '\n\\semester{{{5}}}' \
+            '\n\\crest{{' \
+            '\\includegraphics[width=0.6\\textwidth]{{' \
+            'Resources/swin-logo.pdf}}}}'.format(university, unitcode, unit, author,
+                                                 student, semester)
+
+    return info
+
+
+def initialize_project(args):
+    cwd = os.getcwd()
+    for d in dirs:
+        path = os.path.join(bin_path, d)
+        out_path = os.path.join(cwd, d)
+        if os.path.exists(out_path):
+            if args.overwrite:
+                shutil.rmtree(out_path)
+                shutil.copytree(path, out_path)
+        else:
+            shutil.copytree(path, out_path)
+
+    shutil.copy(os.path.join(bin_path, 'paper.tex'), cwd)
+    shutil.copy(os.path.join(bin_path, 'unipaper.cls'), cwd)
+
+    if args.gitignore:
+        path = os.path.join(cwd, '.gitignore')
+        with open(path, 'w+') as file:
+            file.write('\n'.join(gitignore))
+
+    if args.bibtex:
+        try:
+            open(os.path.join(cwd, 'ref.bib'), 'r')
+        except:
+            open(os.path.join(cwd, 'ref.bib'), 'w+')
+
+    info = get_info(args)
+    with open(os.path.join(cwd, 'info.tex'), 'w+') as file:
+        file.write(info)
+
+
+def create_section(args):
+    name = args.name.lower()
+    name = re.sub('[!@#$%^&*()[]{};:,./<>?\|`~-=+]', '_', name)
+    name = name.replace(' ', '_')
+    cwd = os.getcwd()
+
+    if os.path.exists(os.path.join(cwd, 'unipaper.cls')):
+        path = os.path.join(cwd, 'Content')
+        path = os.path.join(path, 'Sections')
+        try:
+            open(os.path.join(path, '{0}.tex'.format(name)), 'r')
+        except:
+            file = open(os.path.join(path, '{0}.tex'.format(name)), 'w+')
+            contents = '% !TEX root = ../../paper.tex\n\n'
+            contents += '\\section{{{0}}} % (fold)\n' \
+                        '\\label{{sec:{1}}}\n\n' \
+                        '% section {1} (end)\n'.format(args.name, name)
+            print(contents)
+            file.write(contents)
+    else:
+        parser.error('Must be at project root to create new file')
+
+
+if __name__ == '__main__':
+    subparsers = parser.add_subparsers()
+
+    init = subparsers.add_parser('init')
+    init.set_defaults(func=initialize_project)
+    init.add_argument('-o', '--overwrite', action='store_true',
+                      help='Overwrites existing files and folders if a project already '
+                           'exists')
+    init.add_argument('-g', '--gitignore', action='store_true',
+                      help='Creates a LaTeX .gitignore file in the project root')
+    init.add_argument('-b', '--bibtex', action='store_true',
+                      help='Creates a blank bibtex bibliography file in the project root')
+
+    init.add_argument('--author', type=str, required=True, help='The authors name')
+    init.add_argument('--title', type=str, required=True, help='The papers title')
+    init.add_argument('--unit-code', type=str, required=True,
+                      help='The unit code of the subject the paper is for')
+    init.add_argument('--unit-name', type=str, required=True,
+                      help='The name of the subject the paper is for')
+    init.add_argument('--student-id', type=str, required=True,
+                      help='Your student ID')
+    init.add_argument('--semester', type=int, required=True,
+                      help='The semester being currently undertaken')
+
+    init.add_argument('--subtitle', type=str, help='An optional subtitle to add to '
+                                                   'the title')
+
+    new_section = subparsers.add_parser('new-section')
+    new_section.set_defaults(func=create_section)
+    new_section.add_argument('name', type=str, help='The section title')
+
+    args = parser.parse_args()
+    args.func(args)
