@@ -205,7 +205,6 @@ def create_section(args):
             contents += '\\section{{{0}}} % (fold)\n' \
                         '\\label{{sec:{1}}}\n\n' \
                         '% section {1} (end)\n'.format(args.name, name)
-            print(contents)
             file.write(contents)
     else:
         parser.error('Must be at project root to create new file')
