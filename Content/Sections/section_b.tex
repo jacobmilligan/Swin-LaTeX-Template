@@ -1,0 +1,52 @@
+% !TEX root = ../../paper.tex
+
+\section{Code and Math} % (fold)
+\label{sec:code_and_math}
+
+\subsection{Code Blocks} % (fold)
+\label{sub:code_blocks}
+
+Code blocks look like this:
+
+	\begin{listing}[H]
+	\begin{minted}{c}
+float Q_rsqrt( float number )
+{
+	long i;
+	float x2, y;
+	const float threehalfs = 1.5F;
+
+	x2 = number * 0.5F;
+	y  = number;
+	i  = * ( long * ) &y;                       // evil floating point bit level hacking
+	i  = 0x5f3759df - ( i >> 1 );               // what the f@*#? 
+	y  = * ( float * ) &i;
+	y  = y * ( threehalfs - ( x2 * y * y ) );   // 1st iteration
+//	y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
+
+	return y;
+}
+	\end{minted}
+	\caption{Fast Inverse Square-Root operation from Quake III Arena \parencite{quake}}
+	\end{listing}
+% subsection code_blocks (end)
+
+\subsection{Inline code} % (fold)
+\label{sub:inline_code}
+Inline code looks like this: \mintinline{c}{const double pi = 3.1415926535}
+% subsection inline_code (end)
+
+\subsection{Math} % (fold)
+\label{sub:math}
+This is a cool latex section writing cool stuff \parencite{article}. Here's some math, demonstrating \href{https://en.wikipedia.org/wiki/Information_theory#Entropy_of_an_information_source}{Shannon's entropy of an information source}.
+
+\begin{equation}
+\begin{split}
+H(X) = \mathbb{E}_X [I(x)] = -\sum_{x \in \mathbb{X}}p(x)\log p(x)
+\end{split}
+\end{equation}
+
+What about some inline math demonstrating \href{https://en.wikipedia.org/wiki/Euler%27s_identity}{Euler's identity}? $e^{i\pi} + 1 = 0$
+% subsection math (end)
+
+% section code_and_math (end)
