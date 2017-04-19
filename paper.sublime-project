@@ -1,0 +1,26 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+		}
+	],
+	"settings":
+	{
+		"TEXroot": "paper.tex",
+		"builder_settings":
+		{
+			"options": "--shell-escape --8bit --output-directory=./tex_build",
+			"program": "xelatex"
+		},
+		"glossary_auto_trigger": true,
+		"output_directory": "tex_build",
+		"script_commands":
+		[
+			"xelatex -interaction=nonstopmode -synctex=1",
+			"makeglossaries tex_build/paper",
+			"xelatex -interaction=nonstopmode -synctex=1",
+			"xelatex -interaction=nonstopmode -synctex=1"
+		]
+	}
+}
