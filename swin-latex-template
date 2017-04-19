@@ -10,7 +10,8 @@ dirs = ('Content', 'Resources', 'Structure')
 bin_path = os.path.dirname(os.path.realpath(__file__))
 
 gitignore = ['.DS_Store',
-             'tex_build/']
+             'tex_build/',
+             '_minted-*']
 
 
 def get_info(args):
