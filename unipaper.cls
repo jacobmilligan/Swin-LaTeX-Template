@@ -15,6 +15,7 @@
 \RequirePackage{listings}
 \RequirePackage{tcolorbox}
 \RequirePackage[titletoc,title]{appendix}
+\RequirePackage[a4paper, margin=3cm]{geometry}
 
 \tcbuselibrary{breakable,skins,minted}
 
