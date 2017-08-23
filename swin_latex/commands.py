@@ -25,7 +25,6 @@ def initialize_project(args):
         else:
             shutil.copytree(path, out_path)
 
-    shutil.copy(os.path.join(this_tmpl, 'paper.tex'), cwd)
     shutil.copy(os.path.join(this_tmpl, 'unipaper.cls'), cwd)
     shutil.copy(os.path.join(this_tmpl, 'paper.sublime-project'), cwd)
     shutil.copy(os.path.join(this_tmpl, 'info.tex'), cwd)
@@ -40,6 +39,31 @@ def initialize_project(args):
             open(os.path.join(cwd, 'ref.bib'), 'r')
         except:
             open(os.path.join(cwd, 'ref.bib'), 'w+')
+
+    with open(os.path.join(this_tmpl, 'paper.tex'), 'r') as paper:
+        paper_tex = paper.read().splitlines()
+
+    with open(os.path.join(cwd, 'paper.tex'), 'w') as paper:
+        for line in paper_tex:
+            if '\input{Content/abstract}' in line:
+                if args.abstract:
+                    paper.write('\\thispagestyle{empty}\n')
+                    paper.write(line + '\n')
+                    paper.write('\clearpage\n')
+            elif '\input{Content/acknowledgements}' in line:
+                if args.acknowledgements:
+                    paper.write(line + '\n')
+                    paper.write('\clearpage\n')
+            else:
+                paper.write(line + '\n')
+
+    if not args.abstract:
+        abstract_path = os.path.join(os.path.join(os.getcwd(), 'Content'), 'abstract.tex')
+        os.remove(abstract_path)
+
+    if not args.acknowledgements:
+        abstract_path = os.path.join(os.path.join(os.getcwd(), 'Content'), 'acknowledgements.tex')
+        os.remove(abstract_path)
 
 
 def create_section(args):

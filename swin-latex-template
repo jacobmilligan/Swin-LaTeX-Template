@@ -13,6 +13,10 @@ if __name__ == '__main__':
     init.add_argument('-o', '--overwrite', action='store_true',
                       help='Overwrites existing files and folders if a project already '
                            'exists')
+    init.add_argument('-a', '--abstract', action='store_true',
+                      help='Initializes the project with an abstract')
+    init.add_argument('-k', '--acknowledgements', action='store_true',
+                      help='Initializes the project with an acknowledgements section')
     init.add_argument('-g', '--gitignore', action='store_true',
                       help='Creates a LaTeX .gitignore file in the project root')
     init.add_argument('-b', '--bibtex', action='store_true',
