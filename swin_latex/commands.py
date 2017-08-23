@@ -14,6 +14,7 @@ def initialize_project(args):
         this_tmpl = os.path.join(this_tmpl, 'problem_set')
     else:
         this_tmpl = os.path.join(this_tmpl, 'paper')
+        shutil.copy(os.path.join(this_tmpl, 'ref.bib'), cwd)
 
     for d in dirs:
         path = os.path.join(this_tmpl, d)
