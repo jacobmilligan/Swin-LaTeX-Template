@@ -1,105 +1,15 @@
 #!/usr/bin/env python3
 
 import argparse
-import os
-import shutil
-import re
 
-parser = argparse.ArgumentParser()
-dirs = ('Content', 'Resources', 'Structure')
-bin_path = os.path.dirname(os.path.realpath(__file__))
-
-gitignore = ['.DS_Store',
-             'tex_build/',
-             '_minted-*']
-
-
-def get_info(args):
-    author = args.author
-    title = args.title
-    university = "Swinburne University of Technology"
-    unit = args.unit_name
-    unitcode = args.unit_code
-    student = args.student_id
-    semester = args.semester
-
-    info = '\\title{{{0}}}'.format(title)
-
-    if args.subtitle:
-        info += '\n\\subtitle{{{0}}}'.format(args.subtitle)
-
-    info += '\n\\university{{{0}}}' \
-            '\n\\unitcode{{{1}}}' \
-            '\n\\unitname{{{2}}}' \
-            '\n\\author{{{3}}}' \
-            '\n\\studentid{{{4}}}' \
-            '\n\\semester{{{5}}}' \
-            '\n\\crest{{' \
-            '\\includegraphics[width=0.6\\textwidth]{{' \
-            'Resources/swin-logo.pdf}}}}'.format(university, unitcode, unit, author,
-                                                 student, semester)
-
-    return info
-
-
-def initialize_project(args):
-    cwd = os.getcwd()
-    for d in dirs:
-        path = os.path.join(bin_path, d)
-        out_path = os.path.join(cwd, d)
-        if os.path.exists(out_path):
-            if args.overwrite:
-                shutil.rmtree(out_path)
-                shutil.copytree(path, out_path)
-        else:
-            shutil.copytree(path, out_path)
-
-    shutil.copy(os.path.join(bin_path, 'paper.tex'), cwd)
-    shutil.copy(os.path.join(bin_path, 'unipaper.cls'), cwd)
-    shutil.copy(os.path.join(bin_path, 'paper.sublime-project'), cwd)
-
-    if args.gitignore:
-        path = os.path.join(cwd, '.gitignore')
-        with open(path, 'w+') as file:
-            file.write('\n'.join(gitignore))
-
-    if args.bibtex:
-        try:
-            open(os.path.join(cwd, 'ref.bib'), 'r')
-        except:
-            open(os.path.join(cwd, 'ref.bib'), 'w+')
-
-    info = get_info(args)
-    with open(os.path.join(cwd, 'info.tex'), 'w+') as file:
-        file.write(info)
-
-
-def create_section(args):
-    name = args.name.lower()
-    name = re.sub('[!@#$%^&*()[]{};:,./<>?\|`~-=+]', '_', name)
-    name = name.replace(' ', '_')
-    cwd = os.getcwd()
-
-    if os.path.exists(os.path.join(cwd, 'unipaper.cls')):
-        path = os.path.join(cwd, 'Content')
-        path = os.path.join(path, 'Sections')
-        try:
-            open(os.path.join(path, '{0}.tex'.format(name)), 'r')
-        except:
-            file = open(os.path.join(path, '{0}.tex'.format(name)), 'w+')
-            contents = '\\section{{{0}}} % (fold)\n' \
-                        '\\label{{sec:{1}}}\n\n' \
-                        '% section {1} (end)\n'.format(args.name, name)
-            file.write(contents)
-    else:
-        parser.error('Must be at project root to create new file')
-
+from swin_latex import commands
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
 
     init = subparsers.add_parser('init')
-    init.set_defaults(func=initialize_project)
+    init.set_defaults(func=commands.initialize_project)
     init.add_argument('-o', '--overwrite', action='store_true',
                       help='Overwrites existing files and folders if a project already '
                            'exists')
@@ -123,8 +33,11 @@ if __name__ == '__main__':
                                                    'the title')
 
     new_section = subparsers.add_parser('new-section')
-    new_section.set_defaults(func=create_section)
+    new_section.set_defaults(func=commands.create_section)
     new_section.add_argument('name', default="", type=str, help='The section title')
 
     args = parser.parse_args()
-    args.func(args)
+    if len(vars(args)) > 0:
+        args.func(args)
+    else:
+        parser.print_help()
