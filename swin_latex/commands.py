@@ -4,13 +4,19 @@ import re
 import sys
 
 from swin_latex.settings import dirs, template_path, gitignore
-from swin_latex.util import get_info, print_error
+from swin_latex.util import print_error
 
 
 def initialize_project(args):
     cwd = os.getcwd()
+    this_tmpl = template_path
+    if args.type == 'problem-set':
+        this_tmpl = os.path.join(this_tmpl, 'problem_set')
+    else:
+        this_tmpl = os.path.join(this_tmpl, 'paper')
+
     for d in dirs:
-        path = os.path.join(template_path, d)
+        path = os.path.join(this_tmpl, d)
         out_path = os.path.join(cwd, d)
         if os.path.exists(out_path):
             if args.overwrite:
@@ -19,9 +25,10 @@ def initialize_project(args):
         else:
             shutil.copytree(path, out_path)
 
-    shutil.copy(os.path.join(template_path, 'paper.tex'), cwd)
-    shutil.copy(os.path.join(template_path, 'unipaper.cls'), cwd)
-    shutil.copy(os.path.join(template_path, 'paper.sublime-project'), cwd)
+    shutil.copy(os.path.join(this_tmpl, 'paper.tex'), cwd)
+    shutil.copy(os.path.join(this_tmpl, 'unipaper.cls'), cwd)
+    shutil.copy(os.path.join(this_tmpl, 'paper.sublime-project'), cwd)
+    shutil.copy(os.path.join(this_tmpl, 'info.tex'), cwd)
 
     if args.gitignore:
         path = os.path.join(cwd, '.gitignore')
@@ -33,10 +40,6 @@ def initialize_project(args):
             open(os.path.join(cwd, 'ref.bib'), 'r')
         except:
             open(os.path.join(cwd, 'ref.bib'), 'w+')
-
-    info = get_info(args)
-    with open(os.path.join(cwd, 'info.tex'), 'w+') as file:
-        file.write(info)
 
 
 def create_section(args):

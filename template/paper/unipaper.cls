@@ -26,7 +26,10 @@
 \ohead{\headmark}
 
 \definecolor{bluegray}{HTML}{265C83}
-\definecolor{codebg}{HTML}{F6F8FA}
+\definecolor{codebg}{HTML}{FFFFFF}
+\definecolor{codeheader}{HTML}{FAFBFC}
+\definecolor{codeframe}{HTML}{939393}
+\definecolor{codetext}{HTML}{24292E}
 \definecolor{framecolor}{HTML}{DADADA}
 
 \hypersetup {
@@ -79,24 +82,25 @@
 	\thispagestyle{empty}
 }
 
-\newtcbinputlisting{codeinput}[2]{
+\newtcbinputlisting[auto counter, number within=section]{codeinput}[2]{
 	listing file={#2},
 	minted language={#1},
 	minted options={breaklines},
 	breakable,enhanced,listing only,
-	colback=codebg,colframe=framecolor,
-	boxrule=0.08em,
+	colback=codebg,colframe=codeframe,colbacktitle=codeheader,coltext=codetext,
+	boxrule=0.02em,
 	arc=0.1em
 }
 
-\newtcbinputlisting{codeinputwithtitle}[3]{
+\newtcbinputlisting[auto counter, number within=section]{codeinputwithtitle}[3]{
 	listing file={#2},
+	toptitle=0.7em,bottomtitle=0.7em,
 	minted language={#1},
 	minted options={breaklines},
 	breakable,enhanced,listing only,
-	colback=codebg,colframe=framecolor,
-	boxrule=0.08em,coltitle=black,
-	arc=0.1em,title={#3}
+	colback=codebg,colframe=codeframe,colbacktitle=codeheader,coltext=codetext,
+	boxrule=0.02em,coltitle=codetext,
+	arc=0.1em,title={Listing \thetcbcounter: #3}
 }
 
 \BeforeBeginEnvironment{minted}%

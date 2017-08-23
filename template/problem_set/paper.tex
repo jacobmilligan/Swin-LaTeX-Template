@@ -1,0 +1,19 @@
+% !TEX program = xelatex
+% !TEX options = -shell-escape
+% !TEX options = -8bit
+
+\documentclass[paper=a4, fontsize=11pt]{unipaper}
+
+\input{Structure/preamble}
+\input{info}
+
+\begin{document}
+	\maketitle
+
+	\begin{centering}
+		\tableofcontents
+		\rule{\textwidth}{1pt}
+	\end{centering}
+
+	\input{Content/body}
+\end{document}

@@ -1,0 +1,136 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{unipaper}
+
+\LoadClass[headings=standardclasses, abstract=on,10pt]{scrartcl}
+
+\RequirePackage{pdfpages}
+\RequirePackage{datetime}
+\RequirePackage{hyperref}
+\RequirePackage{fontspec}
+\RequirePackage{amsmath,amsfonts,amsthm}
+\RequirePackage[automark, headsepline]{scrlayer-scrpage}
+\RequirePackage[style=authoryear,backend=biber]{biblatex}
+\RequirePackage{etoolbox}
+\RequirePackage[outputdir=tex_build]{minted}
+\RequirePackage{listings}
+\RequirePackage{tcolorbox}
+\RequirePackage[titletoc,title]{appendix}
+
+\tcbuselibrary{breakable,skins,minted}
+
+\pagestyle{scrheadings}
+
+\clearscrheadfoot
+\ihead*{\pagemark}
+\ohead{\headmark}
+
+\definecolor{bluegray}{HTML}{265C83}
+\definecolor{codebg}{HTML}{FFFFFF}
+\definecolor{codeheader}{HTML}{FAFBFC}
+\definecolor{codeframe}{HTML}{939393}
+\definecolor{codetext}{HTML}{24292E}
+\definecolor{framecolor}{HTML}{DADADA}
+
+\hypersetup {
+	colorlinks	= true,
+	urlcolor  	= bluegray,
+	filecolor		= bluegray,
+	linkcolor		= bluegray,
+	citecolor		= bluegray
+}
+
+\usemintedstyle{vs}
+\setminted{breaklines=true}
+\setmonofont[Scale=0.7]{Menlo}
+
+% Info commands
+\newcommand{\@university}{}
+\newcommand{\university}[1]{\renewcommand{\@university}{#1}}
+
+\newcommand{\@unitcode}{}
+\newcommand{\unitcode}[1]{\renewcommand{\@unitcode}{#1}}
+
+\newcommand{\@unitname}{}
+\newcommand{\unitname}[1]{\renewcommand{\@unitname}{#1}}
+
+\newcommand{\@studentid}{}
+\newcommand{\studentid}[1]{\renewcommand{\@studentid}{#1}}
+
+\newcommand{\@crest}{}
+\newcommand{\crest}[1]{\renewcommand{\@crest}{#1}}
+
+\newcommand{\@semester}{}
+\newcommand{\semester}[1]{\renewcommand{\@semester}{#1}}
+
+% Section commands
+\newif\ifsubtitle\subtitlefalse
+\renewcommand{\@subtitle}{}
+\renewcommand{\subtitle}[1]{\renewcommand{\@subtitle}{#1}\subtitletrue}
+
+\renewcommand{\abstractname}{\Large Abstract}
+\patchcmd\abstract{\normalsize}{}{}{}
+
+% Environments
+\newenvironment{acknowledgements}{
+	\section*{\centerline{Acknowledgements}}
+	\thispagestyle{empty}
+}
+
+\newenvironment{frontmatter}[1]{
+	\section*{\centerline{#1}}
+	\thispagestyle{empty}
+}
+
+\newtcbinputlisting[auto counter, number within=section]{codeinput}[2]{
+	listing file={#2},
+	minted language={#1},
+	minted options={breaklines},
+	breakable,enhanced,listing only,
+	colback=codebg,colframe=codeframe,colbacktitle=codeheader,coltext=codetext,
+	boxrule=0.02em,
+	arc=0.1em
+}
+
+\newtcbinputlisting[auto counter, number within=section]{codeinputwithtitle}[3]{
+	listing file={#2},
+	toptitle=0.7em,bottomtitle=0.7em,
+	minted language={#1},
+	minted options={breaklines},
+	breakable,enhanced,listing only,
+	colback=codebg,colframe=codeframe,colbacktitle=codeheader,coltext=codetext,
+	boxrule=0.02em,coltitle=codetext,
+	arc=0.1em,title={Listing \thetcbcounter: #3}
+}
+
+\BeforeBeginEnvironment{minted}%
+     {\begin{tcolorbox}[breakable=unlimited,colback=codebg, colframe=framecolor, boxrule=0.08em, arc=0.1em]}%
+\AfterEndEnvironment{minted}
+   {\end{tcolorbox}}%
+
+% Define maketitle
+\renewcommand{\maketitle}{
+	\begin{center}
+	
+	\@university \par
+	\textit{\@unitcode \ - \@unitname}
+	\vspace{0.5em}
+
+	\Huge \textbf{\@title} \par
+
+	\ifsubtitle
+		\huge \textit{\@subtitle} \par
+	\fi
+
+	\vspace{0.5em}
+
+	\Large \textbf{\@author} \par
+	\large \@studentid \par
+	\vspace{1em}
+	
+	\monthname[\the\month], \the\year, Semester \@semester
+
+	\rule{\textwidth}{1pt}
+
+	\end{center}
+}
+

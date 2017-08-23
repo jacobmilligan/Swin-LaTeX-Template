@@ -17,20 +17,8 @@ if __name__ == '__main__':
                       help='Creates a LaTeX .gitignore file in the project root')
     init.add_argument('-b', '--bibtex', action='store_true',
                       help='Creates a blank bibtex bibliography file in the project root')
-
-    init.add_argument('--author', default="Author", type=str, help='The authors name')
-    init.add_argument('--title', default="Title", type=str, help='The papers title')
-    init.add_argument('--unit-code', default="XXXXXXXXXX", type=str,
-                      help='The unit code of the subject the paper is for')
-    init.add_argument('--unit-name', default="Unit", type=str,
-                      help='The name of the subject the paper is for')
-    init.add_argument('--student-id', default="0000000000", type=str,
-                      help='Your student ID')
-    init.add_argument('--semester', type=int, default=1,
-                      help='The semester being currently undertaken')
-
-    init.add_argument('--subtitle', type=str, help='An optional subtitle to add to '
-                                                   'the title')
+    init.add_argument('-t', '--type', type=str, choices=['paper', 'problem-set'], required=True,
+                      help='The type of assignment being generated')
 
     new_section = subparsers.add_parser('new-section')
     new_section.set_defaults(func=commands.create_section)
