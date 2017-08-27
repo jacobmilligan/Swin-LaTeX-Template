@@ -58,13 +58,15 @@ def initialize_project(args):
             else:
                 paper.write(line + '\n')
 
-    if not args.abstract:
-        abstract_path = os.path.join(os.path.join(os.getcwd(), 'Content'), 'abstract.tex')
-        os.remove(abstract_path)
+    if args.type == 'paper':
+        if not args.abstract:
+            abstract_path = os.path.join(os.path.join(os.getcwd(), 'Content'), 'abstract.tex')
+            os.remove(abstract_path)
 
-    if not args.acknowledgements:
-        abstract_path = os.path.join(os.path.join(os.getcwd(), 'Content'), 'acknowledgements.tex')
-        os.remove(abstract_path)
+        if not args.acknowledgements:
+            abstract_path = os.path.join(os.path.join(os.getcwd(), 'Content'),
+                                         'acknowledgements.tex')
+            os.remove(abstract_path)
 
 
 def create_section(args):
